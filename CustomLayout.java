@@ -47,14 +47,16 @@ public class CustomLayout extends ViewGroup {
         float percentSpacing = (float) Math.PI / (2 * (getChildCount()-1));
         float absoluteRadius = getMeasuredWidth() / 2;
 
+        View anchor = getChildAt(0);
+
         for (int i=1;i<getChildCount();i++){
             View view = getChildAt(i);
 
             float radius = absoluteRadius - view.getWidth()/2;
 
             float degree = (float) (i-1) * percentSpacing;
-            float height =  getHeight() - view.getHeight() - (float)  Math.sin(degree) * (getMeasuredHeight()/2);
-            float width =   getWidth()/2 -view.getWidth() + (float) Math.cos(degree) * radius;
+            float height =  getHeight() - view.getHeight()/2 - anchor.getHeight()/2 - (float)  Math.sin(degree) * (getMeasuredHeight()/2);
+            float width =   getWidth()/2 - view.getWidth() + (float) Math.cos(degree) * radius;
 
             view.animate().y(height).x(width);
         }
