@@ -44,17 +44,28 @@ public class CustomLayout extends ViewGroup {
     }
 
     private void expandChilds() {
-        float percentSpacing = (getHeight())/getChildCount();
+        float percentSpacing = (float) Math.PI / (2 * (getChildCount()-1));
+        float absoluteRadius = getMeasuredWidth() / 2;
 
         for (int i=1;i<getChildCount();i++){
             View view = getChildAt(i);
-            view.animate().y(i*(percentSpacing-view.getHeight()/2));
+
+            float radius = absoluteRadius - view.getWidth()/2;
+
+            float degree = (float) (i-1) * percentSpacing;
+            float height =  getHeight() - view.getHeight() - (float)  Math.sin(degree) * (getMeasuredHeight()/2);
+            float width =   getWidth()/2 -view.getWidth() + (float) Math.cos(degree) * radius;
+
+            view.animate().y(height).x(width);
         }
     }
 
     private void foldChilds() {
+        View anchor = getChildAt(0);
+
         for (int i=1;i<getChildCount(); i++){
-            getChildAt(i).animate().y(getChildAt(0).getY());
+            View child = getChildAt(i);
+            child.animate().y(anchor.getY()+child.getHeight()/2).x(anchor.getX() + child.getWidth()/2);
         }
     }
 
@@ -87,12 +98,13 @@ public class CustomLayout extends ViewGroup {
             curWidth = child.getMeasuredWidth()+child.getPaddingLeft()-child.getPaddingRight();
             curHeight = child.getMeasuredHeight();
 
-            if (i!=0){
-                curWidth=curWidth/2;
-                curHeight=curHeight/2;
+            if (i!=0) {
+                curWidth = curWidth / 2;
+                curHeight = curHeight / 2;
+                child.layout(childWidth / 2 - curWidth / 2, childHeight - curHeight, childWidth / 2 + curWidth / 2, childBottom);
+            } else {
+                child.layout(childWidth / 2 - curWidth / 2, childHeight - curHeight, childWidth / 2 + curWidth / 2, childBottom);
             }
-
-            child.layout(childWidth/2 -curWidth/2, childHeight-curHeight, childWidth/2 +curWidth/2, childBottom);
 
         }
 
