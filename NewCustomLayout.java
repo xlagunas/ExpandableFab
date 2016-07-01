@@ -2,6 +2,7 @@ package net.opentrends.expandableFab;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
@@ -25,6 +26,7 @@ public class NewCustomLayout extends RelativeLayout implements View.OnClickListe
     private double angle;
     //TODO PICK FROM RESOURCES
     private int radius;
+
 
     public NewCustomLayout(Context context) {
         super(context);
@@ -53,7 +55,7 @@ public class NewCustomLayout extends RelativeLayout implements View.OnClickListe
         angle = MAXIMUM_ANGLE / (getChildCount() -1);
         computedPositions = new Rect[getChildCount()-1];
         //TODO CHANGE LATER
-        radius = getMeasuredWidth() - anchor.getLeft() - anchor.getWidth() /2;
+        radius = getMeasuredWidth() - anchor.getLeft() - anchor.getWidth();
         initialized = true;
     }
 
@@ -65,6 +67,7 @@ public class NewCustomLayout extends RelativeLayout implements View.OnClickListe
             layoutSubElements(i);
         }
     }
+
 
     private void layoutAnchor() {
         anchor = getChildAt(0);
@@ -100,17 +103,17 @@ public class NewCustomLayout extends RelativeLayout implements View.OnClickListe
                 (RelativeLayout.LayoutParams) view.getLayoutParams();
 
         //calculated position of the element
-        double xPos = radius * Math.cos((childrenPosition-1)*angle + angleOffset);
-        double yPos = radius * Math.sin((childrenPosition-1)*angle + angleOffset);
+        double xPos = radius * Math.cos((childrenPosition-1)*angle + angle/2);
+        double yPos = radius * Math.sin((childrenPosition-1)*angle + angle/2);
 
         //new (0,0) coordinates
         double anchorXPos = anchor.getX() + anchor.getWidth() / 2;
         double anchorYPos = anchor.getY() + anchor.getHeight() / 2;
 
-        int left    =    (int) (anchorXPos + xPos - st.width/2);
-        int top     =    (int) (anchorYPos -yPos -st.height/2);
+        int left    =    (int) (anchorXPos + xPos - st.width / 2);
+        int top     =    (int) (anchorYPos -yPos -st.height / 2);
         int right   =    (int) (xPos + anchorXPos +st.width / 2);
-        int bottom  =    (int) (anchorYPos -yPos + st.height/2);
+        int bottom  =    (int) (anchorYPos -yPos + st.height / 2);
 
         Rect rect = new Rect(left, top, right, bottom);
         computedPositions[childrenPosition-1] = rect;
@@ -135,7 +138,7 @@ public class NewCustomLayout extends RelativeLayout implements View.OnClickListe
 
         for (int i = getChildCount() - 1; i >= 1; i--) {
             final View child = getChildAt(i);
-            child.animate().x(computedPositions[i-1].left).y(computedPositions[i-1].top).setStartDelay(i * 100).withStartAction(new Runnable() {
+             child.animate().x(computedPositions[i-1].left).y(computedPositions[i-1].top).setStartDelay(i * 100).withStartAction(new Runnable() {
                 @Override
                 public void run() {
                     child.setVisibility(VISIBLE);
